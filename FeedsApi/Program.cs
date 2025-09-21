@@ -1,4 +1,7 @@
+using FeedsApi.Data.Entities;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace FeedsApi
@@ -17,10 +20,14 @@ namespace FeedsApi
             builder.Services.AddDbContext<FeedDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddAuthorization();
+            builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
+                .AddEntityFrameworkStores<FeedDbContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -30,7 +37,7 @@ namespace FeedsApi
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.MapIdentityApi<ApplicationUser>();
 
             app.MapControllers();
 
