@@ -1,4 +1,7 @@
-﻿namespace FeedApi.Data.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace FeedApi.Data.Entities
 {
     public class Feed
     {
@@ -6,5 +9,9 @@
         public int UserId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+
+        [NotMapped]
+        [Required]
+        public string Discriminator { get; set; }
     }
 }

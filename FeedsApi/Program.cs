@@ -1,7 +1,4 @@
 using FeedsApi.Data.Entities;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace FeedsApi
@@ -13,7 +10,11 @@ namespace FeedsApi
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new FeedJsonConverter());
+                });
             builder.Services.AddSwaggerGen();
 
             // Add DbContext with SQLite
