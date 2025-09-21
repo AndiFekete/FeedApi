@@ -12,6 +12,15 @@ public class FeedDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int
     }
 
     public DbSet<Feed> Feeds { get; set; }
-    public DbSet<ImageFeed> ImageFeeds { get; set; }
-    public DbSet<VideoFeed> VideoFeeds { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Feed>()
+            .HasDiscriminator<string>("Discriminator")
+            .HasValue<Feed>("Text")
+            .HasValue<ImageFeed>("Image")
+            .HasValue<VideoFeed>("Video");
+    }
 } 
