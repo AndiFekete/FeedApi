@@ -13,7 +13,7 @@ namespace FeedsApi
             builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.Converters.Add(new FeedJsonConverter());
+                    options.JsonSerializerOptions.Converters.Add(new PostFeedDtoJsonConverter());
                 });
             builder.Services.AddSwaggerGen();
 

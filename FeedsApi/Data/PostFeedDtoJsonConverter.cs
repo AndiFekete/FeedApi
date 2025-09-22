@@ -1,22 +1,21 @@
 using FeedApi.Data.Entities;
+using FeedsApi.DTOs;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public class FeedJsonConverter : JsonConverter<Feed>
+public class PostFeedDtoJsonConverter : JsonConverter<FeedDto>
 {
-    public override Feed Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override FeedDto Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         using var doc = JsonDocument.ParseValue(ref reader);
         var discriminator = doc.RootElement.GetProperty("discriminator").GetString();
 
-        Feed result = discriminator switch
+        FeedDto result = discriminator switch
         {
-            "Image" => JsonSerializer.Deserialize<ImageFeed>(doc.RootElement.GetRawText(), options),
-            "Video" => JsonSerializer.Deserialize<VideoFeed>(doc.RootElement.GetRawText(), options),
-            _ => new Feed
+            "Image" => JsonSerializer.Deserialize<ImageFeedDto>(doc.RootElement.GetRawText(), options),
+            "Video" => JsonSerializer.Deserialize<VideoFeedDto>(doc.RootElement.GetRawText(), options),
+            _ => new FeedDto
             {
-                FeedId = doc.RootElement.GetProperty("feedId").GetInt32(),
-                UserId = doc.RootElement.GetProperty("userId").GetInt32(),
                 Title = doc.RootElement.GetProperty("title").GetString(),
                 Description = doc.RootElement.GetProperty("description").GetString(),
                 Discriminator = discriminator
@@ -26,11 +25,9 @@ public class FeedJsonConverter : JsonConverter<Feed>
         return result;
     }
 
-    public override void Write(Utf8JsonWriter writer, Feed value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, FeedDto value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteNumber("FeedId", value.FeedId);
-        writer.WriteNumber("UserId", value.UserId);
         writer.WriteString("Title", value.Title);
         writer.WriteString("Description", value.Description);
         writer.WriteString("Discriminator", value.Discriminator);
