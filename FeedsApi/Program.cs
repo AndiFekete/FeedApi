@@ -1,3 +1,4 @@
+using FeedsApi.Data.Converters;
 using FeedsApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ namespace FeedsApi
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new PostFeedDtoJsonConverter());
+                    options.JsonSerializerOptions.Converters.Add(new FeedJsonConverter());
                 });
             builder.Services.AddSwaggerGen();
 
