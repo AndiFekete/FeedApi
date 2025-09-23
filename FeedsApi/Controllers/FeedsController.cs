@@ -25,6 +25,14 @@ namespace FeedsApi.Controllers
             return Ok(allFeeds);
         }
 
+        [HttpGet("users/{userId}")]
+        public async Task<ActionResult<IEnumerable<Feed>>> GetFeeds(int userId)
+        {
+            var allFeeds = await _context.Feeds.Where(feed => feed.UserId == userId).ToListAsync();
+
+            return Ok(allFeeds);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Feed>> GetFeed(int id)
         {
@@ -42,7 +50,7 @@ namespace FeedsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Feed>> PostFeed([FromBody] FeedDto feedDto)
         {
-            var userId = GetLoggedInUserId();
+            var userId = HttpContext.GetLoggedInUserId();
 
             Feed feed = feedDto.Discriminator switch
             {
@@ -89,7 +97,7 @@ namespace FeedsApi.Controllers
             }
 
             //check if the user is the owner of the feed
-            if (actualFeed.UserId != GetLoggedInUserId())
+            if (actualFeed.UserId != HttpContext.GetLoggedInUserId())
             {
                 return Forbid();
             }
@@ -135,7 +143,7 @@ namespace FeedsApi.Controllers
                 return NotFound();
             }
 
-            if (feed.UserId != GetLoggedInUserId()) {
+            if (feed.UserId != HttpContext.GetLoggedInUserId()) {
                 return Forbid();
             }
 
@@ -148,11 +156,6 @@ namespace FeedsApi.Controllers
         private bool FeedExists(int id)
         {
             return _context.Feeds.Any(e => e.FeedId == id);
-        }
-
-        private int GetLoggedInUserId()
-        {
-            return int.Parse(HttpContext.User.Claims.First(claim => claim.Type.Contains("nameidentifier")).Value);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace FeedsApi.Controllers
         [HttpPost("like/{feedId}")]
         public async Task<IActionResult> LikeFeed(int feedId)
         {
-            var like = new Like() { FeedId = feedId, UserId = GetLoggedInUserId() };
+            var like = new Like() { FeedId = feedId, UserId = HttpContext.GetLoggedInUserId() };
             _context.Likes.Add(like);
             await _context.SaveChangesAsync();
             return Created();
@@ -39,14 +39,14 @@ namespace FeedsApi.Controllers
         [HttpDelete("unlike/{feedId}")]
         public async Task<IActionResult> UnlikeFeed(int feedId)
         {
-            var userId = GetLoggedInUserId();
+            var userId = HttpContext.GetLoggedInUserId();
             var like = await _context.Likes.FindAsync(userId, feedId);
             if (like == null)
             {
                 return NotFound();
             }
 
-            if (like.UserId != GetLoggedInUserId())
+            if (like.UserId != userId)
             {
                 return Forbid();
             }
@@ -55,11 +55,6 @@ namespace FeedsApi.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private int GetLoggedInUserId()
-        {
-            return int.Parse(HttpContext.User.Claims.First(claim => claim.Type.Contains("nameidentifier")).Value);
         }
     }
 }
