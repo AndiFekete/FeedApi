@@ -29,6 +29,11 @@ namespace FeedsApi.Controllers
         [HttpPost("like/{feedId}")]
         public async Task<IActionResult> LikeFeed(int feedId)
         {
+            if (!_context.Feeds.Any(feed => feed.FeedId == feedId))
+            {
+                return BadRequest("Cannot like non existent feed");
+            }
+
             var like = new Like() { FeedId = feedId, UserId = HttpContext.GetLoggedInUserId() };
             _context.Likes.Add(like);
             await _context.SaveChangesAsync();

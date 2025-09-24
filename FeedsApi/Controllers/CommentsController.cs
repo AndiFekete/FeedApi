@@ -43,6 +43,11 @@ namespace FeedsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Feed>> PostComment([FromBody] CommentDto commentDto)
         {
+            if (!_context.Feeds.Any(feed => feed.FeedId == commentDto.FeedId))
+            {
+                return BadRequest("Cannot comment on non existent feed");
+            }
+
             var userId = HttpContext.GetLoggedInUserId();
 
             var comment = new Comment

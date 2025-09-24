@@ -21,7 +21,8 @@ namespace FeedsApi
 
             // Add DbContext with SQLite
             builder.Services.AddDbContext<FeedDbContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+                        .LogTo(Console.WriteLine, LogLevel.Information));
 
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityApiEndpoints<ApplicationUser>()

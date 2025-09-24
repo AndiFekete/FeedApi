@@ -18,23 +18,34 @@ namespace FeedsApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Feed>>> GetFeeds()
+        public async Task<ActionResult<IEnumerable<FeedWithLikesDto>>> GetFeeds()
         {
-            var allFeeds = await _context.Feeds.ToListAsync();
+            var allFeeds = await _context.Feeds
+                .Select(feed => new FeedWithLikesDto() 
+                {
+                    Feed = feed,
+                    Likes = _context.Likes.Count(like => like.FeedId == feed.FeedId)
+                })
+                .ToListAsync();
 
             return Ok(allFeeds);
         }
 
         [HttpGet("users/{userId}")]
-        public async Task<ActionResult<IEnumerable<Feed>>> GetFeeds(int userId)
+        public async Task<ActionResult<IEnumerable<FeedWithLikesDto>>> GetFeeds(int userId)
         {
-            var allFeeds = await _context.Feeds.Where(feed => feed.UserId == userId).ToListAsync();
+            var allFeeds = await _context.Feeds.Where(feed => feed.UserId == userId)
+                .Select(feed => new FeedWithLikesDto()
+                {
+                    Feed = feed,
+                    Likes = _context.Likes.Count(like => like.FeedId == feed.FeedId)
+                }).ToListAsync();
 
             return Ok(allFeeds);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Feed>> GetFeed(int id)
+        public async Task<ActionResult<FeedWithLikesDto>> GetFeed(int id)
         {
             var feed = await _context.Feeds.FindAsync(id);
 
@@ -43,7 +54,11 @@ namespace FeedsApi.Controllers
                 return NotFound();
             }
 
-            return feed;
+            return new FeedWithLikesDto()
+            { 
+                Feed = feed, 
+                Likes = _context.Likes.Count(like => like.FeedId == id) 
+            };
         }
 
         [Authorize]
