@@ -12,10 +12,12 @@ namespace FeedsApi.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly FeedDbContext _context;
+        private readonly ILogger<CommentsController> _logger;
 
-        public CommentsController(FeedDbContext context)
+        public CommentsController(FeedDbContext context, ILogger<CommentsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet("feed/{id}/all-comments")]
@@ -23,6 +25,7 @@ namespace FeedsApi.Controllers
         {
             var comments = await _context.Comments.Where(comment => comment.FeedId == id).ToListAsync();
 
+            _logger.LogDebug($"GetCommentsForFeed({id})");
             return Ok(comments);
         }
 
@@ -33,9 +36,11 @@ namespace FeedsApi.Controllers
 
             if (comment == null)
             {
+                _logger.LogWarning($"GetComment({id}) NOT FOUND");
                 return NotFound();
             }
 
+            _logger.LogDebug($"GetComment({id})");
             return comment;
         }
 
@@ -45,6 +50,7 @@ namespace FeedsApi.Controllers
         {
             if (!_context.Feeds.Any(feed => feed.FeedId == commentDto.FeedId))
             {
+                _logger.LogWarning($"PostComment() Cannot comment on non existent feed {commentDto.FeedId}");
                 return BadRequest("Cannot comment on non existent feed");
             }
 
@@ -61,6 +67,7 @@ namespace FeedsApi.Controllers
             comment.UserId = userId;
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
+            _logger.LogDebug($"PostComment() Commented on feed {commentDto.FeedId}");
             return CreatedAtAction("GetComment", new { id = comment.FeedId }, comment);
         }
 
@@ -72,18 +79,21 @@ namespace FeedsApi.Controllers
             //if not found, there's no feed with id
             if (actualComment == null)
             {
+                _logger.LogWarning($"PutComment({id}) NOT FOUND");
                 return BadRequest("No comment with given id");
             }
 
             //check if the user is the owner of the comment
             if (actualComment.UserId != HttpContext.GetLoggedInUserId())
             {
+                _logger.LogWarning($"PutComment({id}) FORBIDDEN");
                 return Forbid();
             }
 
             //can't update on different feed
             if (actualComment.FeedId != commentDto.FeedId)
             {
+                _logger.LogWarning($"PutComment({id}) BAD REQUEST - different feed");
                 return BadRequest("Can't update on different feed");
             }
 
@@ -100,6 +110,7 @@ namespace FeedsApi.Controllers
             {
                 if (!CommentExists(id))
                 {
+                    _logger.LogWarning($"PutComment({id}) NOT FOUND in concurrency check");
                     return NotFound();
                 }
                 else
@@ -108,6 +119,7 @@ namespace FeedsApi.Controllers
                 }
             }
 
+            _logger.LogDebug($"PutComment({id}) UPDATED");
             return NoContent();
         }
 
@@ -118,17 +130,20 @@ namespace FeedsApi.Controllers
             var comment = await _context.Comments.FindAsync(id);
             if (comment == null)
             {
+                _logger.LogWarning($"DeleteComment({id}) NOT FOUND");
                 return NotFound();
             }
 
             if (comment.UserId != HttpContext.GetLoggedInUserId())
             {
+                _logger.LogWarning($"DeleteComment({id}) FORBIDDEN");
                 return Forbid();
             }
 
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
 
+            _logger.LogDebug($"DeleteComment({id}) deleted");
             return NoContent();
         }
 

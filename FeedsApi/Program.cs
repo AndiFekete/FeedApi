@@ -10,6 +10,8 @@ namespace FeedsApi
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
 
             // Add services to the container.
             builder.Services.AddControllers()
@@ -22,8 +24,7 @@ namespace FeedsApi
 
             // Add DbContext with SQLite
             builder.Services.AddDbContext<FeedDbContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
-                        .LogTo(Console.WriteLine, LogLevel.Information));
+                options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
@@ -31,8 +32,7 @@ namespace FeedsApi
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-
+            app.Logger.LogInformation("Configuring...");
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -46,7 +46,7 @@ namespace FeedsApi
 
             app.MapControllers();
 
-            // Apply migrations and create test user
+            app.Logger.LogInformation("Applying migrations...");
             using (var scope = app.Services.CreateScope())
             {
                 var serviceProvider = scope.ServiceProvider;
@@ -54,6 +54,7 @@ namespace FeedsApi
                 await CreateTestUser(serviceProvider);
             }
 
+            app.Logger.LogInformation("Starting app...");
             app.Run();
         }
     
