@@ -2,6 +2,7 @@ using FeedsApi.Data.Converters;
 using FeedsApi.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace FeedsApi
 {
@@ -19,6 +20,8 @@ namespace FeedsApi
                 {
                     options.JsonSerializerOptions.Converters.Add(new PostFeedDtoJsonConverter());
                     options.JsonSerializerOptions.Converters.Add(new FeedJsonConverter());
+                    options.JsonSerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
             builder.Services.AddSwaggerGen();
 

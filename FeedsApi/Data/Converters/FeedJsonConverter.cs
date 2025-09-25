@@ -15,14 +15,15 @@ namespace FeedsApi.Data.Converters
             {
                 "Image" => JsonSerializer.Deserialize<ImageFeed>(doc.RootElement.GetRawText(), options),
                 "Video" => JsonSerializer.Deserialize<VideoFeed>(doc.RootElement.GetRawText(), options),
-                _ => new Feed
+                "Text" => new Feed
                 {
                     FeedId = doc.RootElement.GetProperty("feedId").GetInt32(),
                     UserId = doc.RootElement.GetProperty("userId").GetInt32(),
                     Title = doc.RootElement.GetProperty("title").GetString(),
                     Description = doc.RootElement.GetProperty("description").GetString(),
                     Discriminator = discriminator
-                }
+                },
+                _ => throw new JsonException($"Unknown discriminator value: {discriminator}")
             };
 
             return result;
@@ -38,13 +39,13 @@ namespace FeedsApi.Data.Converters
                 case VideoFeed videoFeed:
                     JsonSerializer.Serialize(writer, videoFeed, options);
                     break;
-                default:
+                case Feed feed:
                     writer.WriteStartObject();
-                    writer.WriteNumber("FeedId", value.FeedId);
-                    writer.WriteNumber("UserId", value.UserId);
-                    writer.WriteString("Title", value.Title);
-                    writer.WriteString("Description", value.Description);
-                    writer.WriteString("Discriminator", value.Discriminator);
+                    writer.WriteNumber("FeedId", feed.FeedId);
+                    writer.WriteNumber("UserId", feed.UserId);
+                    writer.WriteString("Title", feed.Title);
+                    writer.WriteString("Description", feed.Description);
+                    writer.WriteString("Discriminator", feed.Discriminator);
                     writer.WriteEndObject();
                     break;
             }

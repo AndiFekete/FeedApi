@@ -16,12 +16,13 @@ namespace FeedsApi.Data.Converters
             {
                 "Image" => JsonSerializer.Deserialize<ImageFeedDto>(doc.RootElement.GetRawText(), options),
                 "Video" => JsonSerializer.Deserialize<VideoFeedDto>(doc.RootElement.GetRawText(), options),
-                _ => new FeedDto
+                "FeedDto" => new FeedDto
                 {
                     Title = doc.RootElement.GetProperty("title").GetString(),
                     Description = doc.RootElement.GetProperty("description").GetString(),
                     Discriminator = discriminator
-                }
+                },
+                _ => throw new JsonException($"Unknown discriminator value: {discriminator}")
             };
 
             return result;
