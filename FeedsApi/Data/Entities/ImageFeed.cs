@@ -1,4 +1,4 @@
-﻿namespace FeedApi.Data.Entities
+﻿namespace FeedsApi.Data.Entities
 {
     public class ImageFeed : Feed
     {

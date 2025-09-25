@@ -1,4 +1,3 @@
-using FeedApi.Data.Entities;
 using FeedsApi.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

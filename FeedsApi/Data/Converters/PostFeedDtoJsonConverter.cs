@@ -1,4 +1,4 @@
-using FeedApi.Data.Entities;
+using FeedsApi.Data.Entities;
 using FeedsApi.DTOs;
 using System.Text.Json;
 using System.Text.Json.Serialization;

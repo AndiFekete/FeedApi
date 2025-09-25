@@ -1,4 +1,4 @@
-﻿using FeedApi.Data.Entities;
+﻿using FeedsApi.Data.Entities;
 using FeedsApi.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

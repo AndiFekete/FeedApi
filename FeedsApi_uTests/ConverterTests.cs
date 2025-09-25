@@ -1,4 +1,4 @@
-﻿using FeedApi.Data.Entities;
+﻿using FeedsApi.Data.Entities;
 using FeedsApi.Data.Converters;
 using System.Text;
 using System.Text.Json;
@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace FeedsApi_uTests
 {
+    [TestFixture]   
     public class ConverterTests
     {
         private FeedJsonConverter _converter;

@@ -1,4 +1,4 @@
-﻿using FeedApi.Data.Entities;
+﻿using FeedsApi.Data.Entities;
 
 namespace FeedsApi.DTOs
 {
