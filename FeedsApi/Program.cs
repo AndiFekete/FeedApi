@@ -65,7 +65,7 @@ namespace FeedsApi
           
             var testUser = new ApplicationUser
             {
-                UserName = "test",
+                UserName = "user@test.com",
                 Email = "user@test.com"
             };
 
