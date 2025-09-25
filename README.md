@@ -1,4 +1,4 @@
 # FeedApi
 
 To run: `dotnet run` from `.\FeedsApi`
-To try, use Swagger
+To try, use Swagger.
