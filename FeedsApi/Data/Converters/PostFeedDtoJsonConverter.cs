@@ -16,7 +16,7 @@ namespace FeedsApi.Data.Converters
             {
                 "Image" => JsonSerializer.Deserialize<ImageFeedDto>(doc.RootElement.GetRawText(), options),
                 "Video" => JsonSerializer.Deserialize<VideoFeedDto>(doc.RootElement.GetRawText(), options),
-                "FeedDto" => new FeedDto
+                "Text" => new FeedDto
                 {
                     Title = doc.RootElement.GetProperty("title").GetString(),
                     Description = doc.RootElement.GetProperty("description").GetString(),
