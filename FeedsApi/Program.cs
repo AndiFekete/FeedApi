@@ -29,6 +29,7 @@ namespace FeedsApi
             builder.Services.AddAuthorization();
             builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
                 .AddEntityFrameworkStores<FeedDbContext>();
+            builder.Services.AddEndpointsApiExplorer();
 
             var app = builder.Build();
 
